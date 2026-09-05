@@ -1,0 +1,120 @@
+{
+  "theme": "light",
+  "archetype": "ORGANIC & EARTHY mixed with SWISS HIGH-CONTRAST",
+  "typography": {
+    "fonts": {
+      "headings": "'Bricolage Grotesque', sans-serif",
+      "body": "'DM Sans', sans-serif"
+    },
+    "hierarchy": {
+      "h1": "text-5xl sm:text-6xl tracking-tighter font-bold",
+      "h2": "text-3xl sm:text-4xl tracking-tight font-semibold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-medium",
+      "h4": "text-lg font-medium",
+      "body": "text-base leading-relaxed",
+      "labels": "text-xs tracking-[0.15em] uppercase font-bold"
+    },
+    "rules": [
+      "NEVER use Inter, Roboto, or Open Sans for headings.",
+      "Headlines > 32px MUST use tight letter spacing (tracking-tight or tighter).",
+      "Overlines/Labels MUST be Uppercase, Tiny, and Wide Spacing."
+    ],
+    "installation": "Import from Google Fonts: @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:opsz,wght@9..40,400..700&display=swap');"
+  },
+  "colors": {
+    "background": {
+      "default": "#FDFCF8",
+      "card": "#FFFFFF",
+      "muted": "#F3F1EB"
+    },
+    "primary": {
+      "DEFAULT": "#064E3B",
+      "foreground": "#FFFFFF",
+      "hover": "#022C22"
+    },
+    "accent": {
+      "DEFAULT": "#D97706",
+      "foreground": "#FFFFFF",
+      "soft": "#FEF3C7"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#475569",
+      "muted": "#64748B"
+    },
+    "status": {
+      "success": "#16A34A",
+      "warning": "#EAB308",
+      "error": "#DC2626"
+    }
+  },
+  "layouts": {
+    "spacing_system": "Generous Spacing Philosophy. Use 2-3x more spacing. p-8, p-12 for containers.",
+    "dashboard_grid": "MODE B: High Density Grid. grid-cols-1 md:grid-cols-3 lg:grid-cols-4. Tight gap-6.",
+    "marketing_grid": "MODE A: The 'Tetris' Grid for landing sections. grid-cols-1 md:grid-cols-12 gap-8.",
+    "rules": [
+      "Mobile-First: Always start with grid-cols-1.",
+      "Containers with borders must have internal padding (p-6 or p-8) to prevent text collision."
+    ]
+  },
+  "surfaces": {
+    "dashboard_cards": "Flat solid surfaces with crisp 1px borders (border-border or #E2E8F0). NO drop shadows. rounded-xl.",
+    "headers": "Solid Background with a hard bottom border, no glassmorphism for this specific app to maintain a clean SaaS feel.",
+    "inputs": "Shadcn inputs customized with solid backgrounds (#F8FAFC) and subtle borders on focus."
+  },
+  "motion": {
+    "interactions": "Hover states must translate-y-[-2px] and slightly darken border color. Micro-interactions for buttons.",
+    "live_analysis": "Use framer-motion to create a 'scanning' effect: a pulsating loader, staggered reveal of AI engines being queried, and glowing progress indicators.",
+    "page_transitions": "Fade-in and slight slide-up (y: 20 -> 0) for dashboard entrance."
+  },
+  "components": {
+    "buttons": "Pill-shaped (rounded-full) or slightly rounded (rounded-lg). Primary buttons use #064E3B. MUST have clear hover states.",
+    "forms": "Use Shadcn Form, Input, Select. Customize to remove standard Vercel look by adding generous padding (h-12) and soft focus rings (focus:ring-primary/20).",
+    "charts": "Recharts. Use RadarChart for Visibility across Clusters. Use BarChart for Overall engine scores. Colors must use the app's accent and primary palette.",
+    "accordion": "Use Shadcn Accordion for the list of AI-generated questions per cluster."
+  },
+  "charts_strategy": {
+    "library": "recharts",
+    "radar_chart": "Compare AI Knowledge vs Reality across clusters (Prayer Logistics, Community, Services, etc.). Fill color: primary with 20% opacity. Stroke: primary.",
+    "bar_chart": "Engine performance (Claude vs GPT vs Gemini). Use different shades of primary and accent colors."
+  },
+  "image_urls": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1528862973381-9bc5ad6d4227",
+      "description": "Zayed Sheikh Mosque, used for marketing hero section overlay."
+    },
+    "feature_1": {
+      "url": "https://images.unsplash.com/photo-1771774574010-34b89b7dc97d",
+      "description": "Muslim cafe owner, used to illustrate 'Muslim Businesses'."
+    },
+    "feature_2": {
+      "url": "https://images.pexels.com/photos/30119029/pexels-photo-30119029.jpeg",
+      "description": "Halal food spread, used for category illustration."
+    }
+  },
+  "accessibility": {
+    "contrast": "Text below 18px MUST have 4.5:1 ratio. Large text 3:1.",
+    "focus": "Focus states must have HIGHER contrast than default.",
+    "aria": "All interactive elements must have appropriate aria-labels."
+  },
+  "instructions_to_main_agent": [
+    "1. Setup Tailwind with provided color palette and Google Fonts.",
+    "2. Build the Landing Hero section using a split layout or bento grid, utilizing the hero_background image.",
+    "3. Build the Analysis Form (Entity Name, Location, Category, URL).",
+    "4. Create a realistic Live Analysis loading state using framer-motion (simulate querying Claude, GPT, Gemini).",
+    "5. Build the Dashboard: Overall Score (large typography), Radar Chart for clusters, Accordion list of missing questions.",
+    "6. Use recharts for the data visualization.",
+    "7. Include a 'Download PDF Audit' button (can be a mocked action with a toast notification).",
+    "8. Apply data-testid to all interactive elements."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Do not converge toward generic AI slop. Make creative, distinctive frontends.",
+    "No pure black or pure white unless specified. Use off-whites and tinted darks.",
+    "DO NOT apply universal transitions (transition: all). Target specific properties.",
+    "DO NOT center align the app container. Respect natural reading flow.",
+    "Use 2-3x more spacing than comfortable.",
+    "NEVER use placeholder URLs (via.placeholder.com). Use the provided image_urls.",
+    "Use lucide-react for icons. Do NOT use emojis as icons.",
+    "Use sonner for toast notifications."
+  ]
+}

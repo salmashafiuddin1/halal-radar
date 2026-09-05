@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:opsz,wght@9..40,400..700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 42 45% 98%;         /* #FDFCF8 bone white */
+        --foreground: 222 47% 11%;        /* #0F172A */
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 160 84% 16%;           /* #064E3B deep emerald */
+        --primary-foreground: 0 0% 100%;
+        --secondary: 42 22% 93%;          /* #F3F1EB warm sand */
+        --secondary-foreground: 222 47% 11%;
+        --muted: 42 22% 93%;
+        --muted-foreground: 215 16% 47%;  /* #64748B */
+        --accent: 32 95% 44%;             /* #D97706 warm gold */
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 74% 50%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 213 27% 84%;            /* #CBD5E1 */
+        --input: 210 40% 96%;             /* #F8FAFC */
+        --ring: 160 84% 16%;
+        --chart-1: 160 84% 16%;           /* emerald */
+        --chart-2: 32 95% 44%;            /* gold */
+        --chart-3: 220 60% 40%;
+        --chart-4: 15 80% 55%;
+        --chart-5: 280 50% 45%;
+        --radius: 0.75rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    html {
+        font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: 'ss01' on, 'cv11' on;
+    }
+    h1, h2, h3, h4 {
+        font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+        letter-spacing: -0.02em;
+    }
+    .font-display {
+        font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    }
+    .label-eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+    ::selection {
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+    }
+}
+
+@layer utilities {
+    .grain {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .btn-hover {
+        transition-property: transform, background-color, border-color, color;
+        transition-duration: 200ms;
+    }
+    .btn-hover:hover {
+        transform: translateY(-2px);
+    }
+}

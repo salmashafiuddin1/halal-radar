@@ -1,0 +1,25 @@
+{
+  "summary": "First-finish smoke tests for Ummah Visibility Analyzer. All 6 backend endpoints and all frontend testids requested in the review pass. Full /api/analyze completed in ~15s (well under the 90s budget) and returned the exact expected shape (overall_score, 5 cluster_scores each with cluster_id/label/visibility_pct/recommendation, 3 engine_scores for gpt/claude/gemini, 10 questions each with engine_answers containing mentioned+snippet for all 3 engines). Landing form, results page (score, radar, engine chart, 5 cluster tiles, questions accordion), history page navigation, and download report all work. No console/page errors.",
+  "tested_scope": ["backend", "frontend", "integration"],
+  "passed": [
+    "GET /api/ -> 200 {status:ok}",
+    "GET /api/config -> 200 with 5 clusters + 3 engines (gpt, claude, gemini)",
+    "POST /api/analyze valid input -> 200 in ~15s; overall_score=0 (int), 5 cluster_scores with recommendation, 3 engine_scores, 10 questions with engine_answers[{gpt,claude,gemini}] each having {mentioned, snippet}",
+    "POST /api/analyze with empty fields -> 400 with detail 'entity_name, location and category are required'",
+    "GET /api/analyses/{id} -> 200 returns full stored analysis",
+    "GET /api/analyses -> 200 returns list with id, entity_name, location, category, overall_score, created_at",
+    "Landing (/) shows analyze-form, input-entity-name, input-location, select-category, input-website, submit-analyze",
+    "Form inputs accept typing (no focus loss)",
+    "/results/{id} shows results-page, overall-score, radar-chart, engine-chart, all 5 cluster-{id} tiles, questions-accordion, download-report",
+    "download-report triggers file download 'Al-Noor-Mosque-visibility-audit.json'",
+    "/history shows history-page and history-item-{id}; clicking item navigates to /results/{id}",
+    "No page/console errors during full UI walkthrough"
+  ],
+  "failed": [],
+  "action_items": [
+    "None from testing. Optional observation: for the seeded 'Al-Noor Mosque / Houston, TX' run the overall_score was 0 (entity not mentioned by any engine) which is expected for a generic name - no bug, just noting for product review."
+  ],
+  "success_rate": {"backend": "100% (6/6)", "frontend": "100% (all requested testids + flows)"},
+  "retest_needed": false,
+  "full_testing_deferred": true
+}
