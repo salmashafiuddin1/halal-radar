@@ -29,10 +29,6 @@ api_router = APIRouter(prefix="/api")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("halal_restaurant")
 
-# ---------------------------------------------------------------------------
-# Analysis config - HALAL RESTAURANT SPECIFIC
-# ---------------------------------------------------------------------------
-
 CLUSTERS = [
     {
         "id": "menu_offerings",
@@ -61,13 +57,7 @@ CLUSTERS = [
     },
 ]
 
-# Single, cheap, fast model for question generation, probing, and recommendations
 ENGINE = {"id": "claude", "label": "Claude (Anthropic)", "model": "claude-haiku-4-5-20251001"}
-
-
-# ---------------------------------------------------------------------------
-# Pydantic models
-# ---------------------------------------------------------------------------
 
 class AnalyzeRequest(BaseModel):
     entity_name: str
@@ -94,7 +84,6 @@ class ClusterScore(BaseModel):
 
 
 class BusinessData(BaseModel):
-    """Real-world business data from Yelp/Google"""
     name: str
     rating: Optional[float] = None
     review_count: Optional[int] = None
@@ -118,10 +107,6 @@ class AnalysisResult(BaseModel):
     estimated_customer_impact: str = ""
     created_at: str
 
-
-# ---------------------------------------------------------------------------
-# Database (SQLite, no external service required)
-# ---------------------------------------------------------------------------
 
 async def init_db():
     async with aiosqlite.connect(DB_PATH) as db:
@@ -159,17 +144,7 @@ async def save_analysis(result: AnalysisResult):
         await db.commit()
 
 
-# ---------------------------------------------------------------------------
-# Business Data Fetchers (Yelp/Google comparison)
-# ---------------------------------------------------------------------------
-
 async def fetch_business_data(restaurant_name: str, location: str) -> BusinessData:
-    """
-    Attempt to fetch real business data for comparison.
-    For hackathon MVP, we'll use a simple approach:
-    - Try Google Places API if configured
-    - Fall back to realistic mock data based on restaurant name/location
-    """
     try:
         import urllib.request
         import json as json_lib
@@ -198,10 +173,6 @@ async def calculate_visibility_gap(
     business_data: BusinessData,
     restaurant_name: str
 ) -> tuple[str, str]:
-    """
-    Compare what Claude knows vs what's publicly available.
-    Return: (gap_description, estimated_impact)
-    """
     invisible_count = sum(1 for q in claude_results if not q.mentioned)
     total_count = len(claude_results)
 
@@ -218,10 +189,6 @@ async def calculate_visibility_gap(
     return gap_desc, impact
 
 
-# ---------------------------------------------------------------------------
-# LLM helpers
-# ---------------------------------------------------------------------------
-
 async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024) -> str:
     response = await anthropic_client.messages.create(
         model=ENGINE["model"],
@@ -233,7 +200,6 @@ async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024) -> str:
 
 
 async def generate_questions(entity_name: str, location: str, category: str) -> List[Dict[str, str]]:
-    """Ask Claude to generate 10 realistic restaurant search questions (2 per cluster)."""
     system = (
         "You are an assistant that generates realistic search queries about halal restaurants. "
         "These are questions Muslim customers actually ask AI engines when looking for halal dining. "
@@ -284,7 +250,6 @@ Return JSON with this exact shape:
 
 
 async def probe_question(question: str, entity_name: str) -> Dict[str, Any]:
-    """Ask Claude the question and check if the entity is mentioned."""
     system = (
         "You are a helpful assistant answering a user's question. "
         "Give a short, practical answer with up to 3 specific recommendations by name if relevant. "
@@ -343,10 +308,6 @@ async def generate_recommendation(entity_name: str, category: str, cluster: Dict
         )
 
 
-# ---------------------------------------------------------------------------
-# Routes
-# ---------------------------------------------------------------------------
-
 @app.on_event("startup")
 async def startup():
     await init_db()
@@ -367,17 +328,13 @@ async def analyze(req: AnalyzeRequest):
     if not req.entity_name.strip() or not req.location.strip():
         raise HTTPException(status_code=400, detail="entity_name and location are required")
 
-    # Force category to Halal Restaurant for hackathon focus
     req.category = "Halal Restaurant"
+    logger.info(f"Analyzing {req.entity_name} in {req.location}")
 
-    logger.info(f"Analyzing {req.entity_name} in {req.location} (Halal Restaurant)")
-
-    # 1) Generate questions
     questions = await generate_questions(req.entity_name, req.location, req.category)
     if not questions:
         raise HTTPException(status_code=502, detail="Could not generate questions")
 
-    # 2) Probe Claude for every question in parallel
     probe_results = await asyncio.gather(
         *(probe_question(q["question"], req.entity_name) for q in questions)
     )
@@ -392,14 +349,12 @@ async def analyze(req: AnalyzeRequest):
         for q, res in zip(questions, probe_results)
     ]
 
-    # 3) Cluster scoring
     cluster_stats: Dict[str, Dict[str, int]] = {c["id"]: {"visible": 0, "total": 0} for c in CLUSTERS}
     for qr in question_results:
         cluster_stats[qr.cluster_id]["total"] += 1
         if qr.mentioned:
             cluster_stats[qr.cluster_id]["visible"] += 1
 
-    # 4) Recommendations for invisible clusters (parallel)
     invisible_clusters = [c for c in CLUSTERS if cluster_stats[c["id"]]["visible"] == 0]
     rec_results = (
         await asyncio.gather(
@@ -458,7 +413,6 @@ async def analyze(req: AnalyzeRequest):
         created_at=datetime.now(timezone.utc).isoformat(),
     )
 
-    # 5) Persist
     try:
         await save_analysis(result)
     except Exception as e:

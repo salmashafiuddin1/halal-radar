@@ -16,7 +16,6 @@ import {
 import { ScanSearch, Sparkles, ArrowRight, MapPin, Building2, Globe, Radar, Compass, Users, Bot, Send } from "lucide-react";
 import AnalysisRunner from "@/components/AnalysisRunner";
 
-// Halal Restaurant specific - no category selector needed
 const CATEGORY = "Halal Restaurant";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
