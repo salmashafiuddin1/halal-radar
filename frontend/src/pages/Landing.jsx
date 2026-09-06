@@ -164,20 +164,20 @@ export default function Landing() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-24 lg:grid-cols-3 lg:px-10">
           <StepCard
             step="01"
-            title="Real community questions"
-            body="We auto-generate 10 realistic queries across prayer, community, services, convert support and recommendations — the way Muslims actually ask AI."
+            title="Real customer questions"
+            body="We auto-generate 10 realistic queries Muslims ask when searching for halal restaurants: menu & offerings, location & hours, reviews, community vibes, and pricing."
             icon={<ScanSearch size={22} />}
           />
           <StepCard
             step="02"
             title="Probe with Claude"
-            body="Each question is sent to Claude (Anthropic) in parallel. We record whether your entity is mentioned by name in the response."
+            body="Each question is sent to Claude (Anthropic) in parallel. We record whether your restaurant is mentioned by name in the response."
             icon={<Send size={22} />}
           />
           <StepCard
             step="03"
-            title="Cluster & fix"
-            body="Answers are clustered by theme. Invisible clusters get a plain-language content prescription — a specific page or FAQ that will change the answer."
+            title="Gap analysis & fixes"
+            body="We compare Claude's knowledge to your actual business data (from Yelp/Google). Missing clusters get actionable content recommendations to improve visibility."
             icon={<Radar size={22} />}
           />
         </div>

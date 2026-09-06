@@ -136,6 +136,77 @@ export default function Results() {
         </div>
       </section>
 
+      {/* Visibility Gap Analysis */}
+      {data.claude_visibility_gap && (
+        <section className="mb-12">
+          <div className="rounded-2xl border border-border bg-card p-6 lg:p-8">
+            <div className="mb-4">
+              <div className="label-eyebrow text-accent">Claude vs Public Data</div>
+              <h2 className="mt-1 font-display text-xl font-semibold tracking-tight">
+                The visibility gap
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="rounded-lg border border-border bg-secondary/30 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Claude's Knowledge</p>
+                <p className="mt-3 text-sm leading-relaxed text-foreground">{data.claude_visibility_gap}</p>
+              </div>
+              <div className="rounded-lg border border-emerald-300/50 bg-emerald-50/30 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Customer Impact</p>
+                <p className="mt-3 text-sm leading-relaxed text-foreground">{data.estimated_customer_impact}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Public Business Data */}
+      {data.business_data && (
+        <section className="mb-12">
+          <div className="rounded-2xl border border-border bg-card p-6 lg:p-8">
+            <div className="mb-4">
+              <div className="label-eyebrow text-primary">What Yelp & Google show</div>
+              <h2 className="mt-1 font-display text-xl font-semibold tracking-tight">
+                Your public business data
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {data.business_data.rating && (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Rating</p>
+                  <p className="mt-2 font-display text-2xl font-bold text-foreground">{data.business_data.rating}</p>
+                  {data.business_data.review_count && <p className="text-xs text-muted-foreground">({data.business_data.review_count} reviews)</p>}
+                </div>
+              )}
+              {data.business_data.address && (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Location</p>
+                  <p className="mt-2 text-sm text-foreground">{data.business_data.address}</p>
+                </div>
+              )}
+              {data.business_data.hours && (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Hours</p>
+                  <p className="mt-2 text-sm text-foreground">{data.business_data.hours}</p>
+                </div>
+              )}
+              {data.business_data.menu_highlights && data.business_data.menu_highlights.length > 0 && (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Highlights</p>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {data.business_data.menu_highlights.slice(0, 3).map((h, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs">
+                        {h}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Charts */}
       <section className="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-6 lg:p-8">
