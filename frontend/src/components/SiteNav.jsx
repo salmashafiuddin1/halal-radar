@@ -11,7 +11,7 @@ export default function SiteNav() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <ScanSearch size={18} strokeWidth={2.4} />
           </span>
-          Ummah Visibility
+          HalalRadar
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link
