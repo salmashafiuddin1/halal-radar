@@ -149,11 +149,11 @@ async def fetch_business_data(restaurant_name: str, location: str) -> BusinessDa
         import urllib.request
         import json as json_lib
 
-        # Try a simple Yelp Business Search simulation
-        # (In production, you'd use official APIs)
+        # TODO: hook up real Yelp API eventually
+        # for now just return realistic mock data
         query = f"{restaurant_name} {location} halal restaurant"
 
-        # For hackathon, return structured mock that represents what Yelp would show
+        # fake but realistic - most halal places do have good ratings
         return BusinessData(
             name=restaurant_name,
             rating=4.5,  # Example: most halal restaurants have good ratings
@@ -392,10 +392,10 @@ async def analyze(req: AnalyzeRequest):
     total_qs = sum(s["total"] for s in cluster_stats.values())
     overall = int(round(100 * total_visible / total_qs)) if total_qs else 0
 
-    # Fetch real business data for comparison
+    # get yelp mock data for comparison
     business_data = await fetch_business_data(req.entity_name, req.location)
 
-    # Calculate visibility gap between Claude and reality
+    # score how bad the gap is
     gap_desc, impact = await calculate_visibility_gap(question_results, business_data, req.entity_name)
 
     result = AnalysisResult(
