@@ -7,8 +7,9 @@ export default function SiteNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-        <Link to="/" data-testid="nav-logo" className="flex items-center gap-2">
-          <img src="/logo.png" alt="HalalRadar" className="h-16 w-auto object-contain" />
+        <Link to="/" data-testid="nav-logo" className="flex items-center gap-2 font-display text-lg font-semibold tracking-tight">
+          <span className="text-2xl">🎯</span>
+          HalalRadar
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link
