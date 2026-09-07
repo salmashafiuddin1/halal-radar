@@ -151,7 +151,7 @@ export default function Landing() {
                   <>Analyzing…</>
                 ) : (
                   <>
-                    Reveal my visibility <ArrowRight size={18} className="ml-2" />
+                    Get a free audit report <ArrowRight size={18} className="ml-2" />
                   </>
                 )}
               </Button>
