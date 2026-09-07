@@ -1,0 +1,11 @@
+app = "halalradar-backend"
+primary_region = "iad"
+
+[build]
+dockerfile = "Dockerfile"
+
+[env]
+ANTHROPIC_API_KEY = ""
+
+[http_service]
+internal_port = 8080
