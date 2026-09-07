@@ -80,8 +80,10 @@ export default function Landing() {
               <span className="text-accent">recommend you?</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Most customers find halal restaurants through AI. If Claude doesn't mention
-              your restaurant, you're losing customers. We show you the exact gaps and how to fix them.
+              Your halal restaurant is great. But is Claude AI recommending you? When Muslim customers search for halal food on AI, most don't find you—even though you have real reviews, real ratings, and real customers. HalalRadar analyzes your visibility and gives specific, actionable recommendations to get discovered. In 5 seconds, you'll know exactly where you're invisible to AI—and how to fix it.
+            </p>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Built by Salma Shafi
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2"><Bot size={16} className="text-primary" /> Powered by Claude</div>
