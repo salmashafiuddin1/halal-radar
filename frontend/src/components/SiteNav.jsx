@@ -7,11 +7,8 @@ export default function SiteNav() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-        <Link to="/" data-testid="nav-logo" className="flex items-center gap-2 font-display text-lg font-semibold tracking-tight">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <ScanSearch size={18} strokeWidth={2.4} />
-          </span>
-          HalalRadar
+        <Link to="/" data-testid="nav-logo" className="flex items-center gap-2">
+          <img src="/logo.png" alt="HalalRadar" className="h-12 w-auto" />
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link
