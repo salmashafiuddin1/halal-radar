@@ -93,6 +93,13 @@ class BusinessData(BaseModel):
     phone: Optional[str] = None
 
 
+class AnalysisComparison(BaseModel):
+    previous_score: int
+    current_score: int
+    improvement: int
+    improved_clusters: List[str] = []
+
+
 class AnalysisResult(BaseModel):
     id: str
     entity_name: str
@@ -106,6 +113,8 @@ class AnalysisResult(BaseModel):
     claude_visibility_gap: str = ""
     estimated_customer_impact: str = ""
     created_at: str
+    previous_analysis_id: Optional[str] = None
+    comparison: Optional[AnalysisComparison] = None
 
 
 async def init_db():
@@ -189,14 +198,31 @@ async def calculate_visibility_gap(
     return gap_desc, impact
 
 
-async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024) -> str:
+async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024, use_search: bool = False) -> str:
+    tools = None
+    if use_search:
+        tools = [
+            {
+                "type": "web_search",
+                "web_search": {}
+            }
+        ]
+
     response = await anthropic_client.messages.create(
         model=ENGINE["model"],
         max_tokens=max_tokens,
         system=system,
+        tools=tools,
         messages=[{"role": "user", "content": prompt}],
     )
-    return "".join(block.text for block in response.content if block.type == "text").strip()
+
+    # Process tool use if search was enabled
+    text_parts = []
+    for block in response.content:
+        if block.type == "text":
+            text_parts.append(block.text)
+
+    return "".join(text_parts).strip()
 
 
 async def generate_questions(entity_name: str, location: str, category: str) -> List[Dict[str, str]]:
@@ -249,14 +275,15 @@ Return JSON with this exact shape:
     return cleaned
 
 
-async def probe_question(question: str, entity_name: str) -> Dict[str, Any]:
+async def probe_question(question: str, entity_name: str, use_search: bool = True) -> Dict[str, Any]:
     system = (
-        "You are a helpful assistant answering a user's question. "
+        "You are a helpful assistant answering a user's question about restaurants and dining. "
+        "Use web search to find current information about restaurants. "
         "Give a short, practical answer with up to 3 specific recommendations by name if relevant. "
         "If you don't know specifics, say so briefly."
     )
     try:
-        text = await _ask_claude(system, question, max_tokens=400)
+        text = await _ask_claude(system, question, max_tokens=400, use_search=use_search)
     except Exception as e:
         logger.warning(f"Probe failed: {e}")
         return {"mentioned": False, "snippet": "(engine error)"}
@@ -443,6 +470,133 @@ async def list_analyses(limit: int = 20):
         )
         rows = await cursor.fetchall()
     return [dict(row) for row in rows]
+
+
+@api_router.post("/re-analyze/{previous_id}", response_model=AnalysisResult)
+async def re_analyze(previous_id: str):
+    """Re-analyze a restaurant to show visibility improvements after implementing recommendations."""
+    # Fetch the previous analysis
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        cursor = await db.execute("SELECT payload FROM analyses WHERE id = ?", (previous_id,))
+        row = await cursor.fetchone()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Previous analysis not found")
+
+    previous_analysis = AnalysisResult(**json.loads(row["payload"]))
+
+    # Run a new analysis with the same parameters
+    req = AnalyzeRequest(
+        entity_name=previous_analysis.entity_name,
+        location=previous_analysis.location,
+        category=previous_analysis.category,
+        website_url=previous_analysis.website_url
+    )
+
+    logger.info(f"Re-analyzing {req.entity_name} in {req.location} (previous: {previous_id})")
+
+    # Generate new questions and probe with search enabled
+    questions = await generate_questions(req.entity_name, req.location, req.category)
+    if not questions:
+        raise HTTPException(status_code=502, detail="Could not generate questions")
+
+    probe_results = await asyncio.gather(
+        *(probe_question(q["question"], req.entity_name, use_search=True) for q in questions)
+    )
+
+    question_results = [
+        QuestionResult(
+            question=q["question"],
+            cluster_id=q["cluster_id"],
+            mentioned=res["mentioned"],
+            snippet=res["snippet"],
+        )
+        for q, res in zip(questions, probe_results)
+    ]
+
+    cluster_stats: Dict[str, Dict[str, int]] = {c["id"]: {"visible": 0, "total": 0} for c in CLUSTERS}
+    for qr in question_results:
+        cluster_stats[qr.cluster_id]["total"] += 1
+        if qr.mentioned:
+            cluster_stats[qr.cluster_id]["visible"] += 1
+
+    invisible_clusters = [c for c in CLUSTERS if cluster_stats[c["id"]]["visible"] == 0]
+    rec_results = (
+        await asyncio.gather(
+            *(generate_recommendation(req.entity_name, req.category, c) for c in invisible_clusters)
+        )
+        if invisible_clusters
+        else []
+    )
+    rec_map = {c["id"]: r for c, r in zip(invisible_clusters, rec_results)}
+
+    cluster_scores: List[ClusterScore] = []
+    for c in CLUSTERS:
+        stat = cluster_stats[c["id"]]
+        pct = int(round(100 * stat["visible"] / stat["total"])) if stat["total"] else 0
+        if stat["visible"] == 0:
+            rec = rec_map.get(c["id"], "")
+        else:
+            rec = (
+                f"Good visibility here. Keep publishing fresh content about "
+                f"{c['description'].lower()}"
+            )
+        cluster_scores.append(
+            ClusterScore(
+                cluster_id=c["id"],
+                label=c["label"],
+                description=c["description"],
+                visibility_pct=pct,
+                total_questions=stat["total"],
+                visible_questions=stat["visible"],
+                recommendation=rec,
+            )
+        )
+
+    total_visible = sum(s["visible"] for s in cluster_stats.values())
+    total_qs = sum(s["total"] for s in cluster_stats.values())
+    overall = int(round(100 * total_visible / total_qs)) if total_qs else 0
+
+    business_data = await fetch_business_data(req.entity_name, req.location)
+    gap_desc, impact = await calculate_visibility_gap(question_results, business_data, req.entity_name)
+
+    # Calculate improvement
+    improvement = overall - previous_analysis.overall_score
+    improved_clusters = [
+        c["id"] for c in CLUSTERS
+        if cluster_stats[c["id"]]["visible"] >
+        next((cs.visible_questions for cs in previous_analysis.cluster_scores if cs.cluster_id == c["id"]), 0)
+    ]
+
+    result = AnalysisResult(
+        id=str(uuid.uuid4()),
+        entity_name=req.entity_name,
+        location=req.location,
+        category=req.category,
+        website_url=req.website_url,
+        overall_score=overall,
+        cluster_scores=cluster_scores,
+        questions=question_results,
+        business_data=business_data,
+        claude_visibility_gap=gap_desc,
+        estimated_customer_impact=impact,
+        created_at=datetime.now(timezone.utc).isoformat(),
+        previous_analysis_id=previous_id,
+        comparison=AnalysisComparison(
+            previous_score=previous_analysis.overall_score,
+            current_score=overall,
+            improvement=improvement,
+            improved_clusters=improved_clusters
+        )
+    )
+
+    try:
+        await save_analysis(result)
+    except Exception as e:
+        logger.warning(f"Failed to persist analysis: {e}")
+
+    return result
 
 
 app.include_router(api_router)
