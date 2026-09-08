@@ -199,22 +199,22 @@ async def calculate_visibility_gap(
 
 
 async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024, use_search: bool = False) -> str:
-    tools = None
+    kwargs = {
+        "model": ENGINE["model"],
+        "max_tokens": max_tokens,
+        "system": system,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+
     if use_search:
-        tools = [
+        kwargs["tools"] = [
             {
                 "type": "web_search",
                 "web_search": {}
             }
         ]
 
-    response = await anthropic_client.messages.create(
-        model=ENGINE["model"],
-        max_tokens=max_tokens,
-        system=system,
-        tools=tools,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    response = await anthropic_client.messages.create(**kwargs)
 
     # Extract all text content from response
     text_parts = []
