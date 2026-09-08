@@ -178,7 +178,7 @@ export default function Landing() {
           <StepCard
             step="03"
             title="Gap analysis & fixes"
-            body="We compare Claude's knowledge to your actual business data (from Yelp/Google). Missing clusters get actionable content recommendations to improve visibility."
+            body="We compare what AI tools know about you to your actual business data (from Yelp/Google). Missing clusters get actionable content recommendations to improve visibility."
             icon={<Radar size={22} />}
           />
         </div>
