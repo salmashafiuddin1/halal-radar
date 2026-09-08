@@ -57,7 +57,7 @@ CLUSTERS = [
     },
 ]
 
-ENGINE = {"id": "claude", "label": "Claude (Anthropic)", "model": "claude-haiku-4-5-20251001"}
+ENGINE = {"id": "claude", "label": "Claude (Anthropic)", "model": "claude-sonnet-4-20250514"}
 
 class AnalyzeRequest(BaseModel):
     entity_name: str
@@ -208,48 +208,21 @@ async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024, use_sear
             }
         ]
 
-    messages = [{"role": "user", "content": prompt}]
+    response = await anthropic_client.messages.create(
+        model=ENGINE["model"],
+        max_tokens=max_tokens,
+        system=system,
+        tools=tools,
+        messages=[{"role": "user", "content": prompt}],
+    )
 
-    # Agentic loop to handle tool use
-    while True:
-        response = await anthropic_client.messages.create(
-            model=ENGINE["model"],
-            max_tokens=max_tokens,
-            system=system,
-            tools=tools,
-            messages=messages,
-        )
+    # Extract all text content from response
+    text_parts = []
+    for block in response.content:
+        if hasattr(block, "text"):
+            text_parts.append(block.text)
 
-        # Check for text content in response
-        text_parts = []
-        tool_use_blocks = []
-        for block in response.content:
-            if block.type == "text":
-                text_parts.append(block.text)
-            elif block.type == "tool_use":
-                tool_use_blocks.append(block)
-
-        # If no tool use, return the text response
-        if not tool_use_blocks:
-            return "".join(text_parts).strip()
-
-        # If there's tool use, add the assistant's response and continue
-        messages.append({"role": "assistant", "content": response.content})
-
-        # Process tool results
-        tool_results = []
-        for tool_block in tool_use_blocks:
-            if tool_block.type == "tool_use" and tool_block.name == "web_search":
-                # The API handles web_search automatically, we just acknowledge it
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": tool_block.id,
-                    "content": "Search completed. Information has been retrieved and integrated above."
-                })
-
-        messages.append({"role": "user", "content": tool_results})
-
-        # Continue loop to get the final response
+    return "".join(text_parts).strip()
 
 
 async def generate_questions(entity_name: str, location: str, category: str) -> List[Dict[str, str]]:
