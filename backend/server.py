@@ -57,7 +57,7 @@ CLUSTERS = [
     },
 ]
 
-ENGINE = {"id": "claude", "label": "Claude (Anthropic)", "model": "claude-3-5-sonnet-20241022"}
+ENGINE = {"id": "claude", "label": "Claude (Anthropic)", "model": "claude-sonnet-5"}
 
 class AnalyzeRequest(BaseModel):
     entity_name: str
