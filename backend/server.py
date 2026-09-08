@@ -209,7 +209,7 @@ async def _ask_claude(system: str, prompt: str, max_tokens: int = 1024, use_sear
     if use_search:
         kwargs["tools"] = [
             {
-                "type": "web_search",
+                "type": "web_search_20260209",
                 "web_search": {}
             }
         ]
