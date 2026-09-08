@@ -130,7 +130,7 @@ export default function Results() {
               </div>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              Percentage of community questions where Claude mentioned your entity.
+              Percentage of community questions where AI tools discovered your entity.
             </p>
           </div>
         </div>
@@ -141,14 +141,14 @@ export default function Results() {
         <section className="mb-12">
           <div className="rounded-2xl border border-border bg-card p-6 lg:p-8">
             <div className="mb-4">
-              <div className="label-eyebrow text-accent">Claude vs Public Data</div>
+              <div className="label-eyebrow text-accent">AI Tools vs Public Data</div>
               <h2 className="mt-1 font-display text-xl font-semibold tracking-tight">
                 The visibility gap
               </h2>
             </div>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="rounded-lg border border-border bg-secondary/30 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Claude's Knowledge</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">What AI Sees</p>
                 <p className="mt-3 text-sm leading-relaxed text-foreground">{data.claude_visibility_gap}</p>
               </div>
               <div className="rounded-lg border border-emerald-300/50 bg-emerald-50/30 p-4">
@@ -323,7 +323,7 @@ export default function Results() {
             See every AI answer
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Expand any question to read exactly what Claude answered and whether your entity was mentioned.
+            Expand any question to read exactly what the AI tools answered and whether your entity was mentioned.
           </p>
         </div>
         <Accordion type="single" collapsible className="w-full" data-testid="questions-accordion">
@@ -360,7 +360,7 @@ export default function Results() {
                   }`}
                 >
                   <div className="mb-2 flex items-center justify-between">
-                    <span className="label-eyebrow text-foreground">Claude (Anthropic)</span>
+                    <span className="label-eyebrow text-foreground">AI Tools Response</span>
                     {q.mentioned ? (
                       <Badge className="bg-emerald-600">Mentioned</Badge>
                     ) : (
