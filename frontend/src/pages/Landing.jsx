@@ -83,7 +83,7 @@ export default function Landing() {
               Your halal restaurant is great. But are ChatGPT, Claude, and Google Gemini recommending you? When Muslim customers search for halal food on AI, most don't find you—even though you have real reviews, real ratings, and real customers. HalalRadar analyzes your visibility across all major AI tools and gives specific, actionable recommendations to get discovered. In 5 seconds, you'll know exactly where you're invisible to AI—and how to fix it.
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
-              Built by Salma Shafi
+              Built by <a href="https://salmashafi.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Salma Shafi</a>
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2"><Bot size={16} className="text-primary" /> Tests ChatGPT, Claude & Gemini</div>
