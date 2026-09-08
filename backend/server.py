@@ -277,10 +277,12 @@ Return JSON with this exact shape:
 
 async def probe_question(question: str, entity_name: str, use_search: bool = True) -> Dict[str, Any]:
     system = (
-        "You are a helpful assistant answering a user's question about restaurants and dining. "
-        "Use web search to find current information about restaurants. "
-        "Give a short, practical answer with up to 3 specific recommendations by name if relevant. "
-        "If you don't know specifics, say so briefly."
+        "You are a helpful assistant answering a user's question about halal restaurants and dining. "
+        "Use web search to find current information about halal restaurants in the specified location. "
+        "When you find restaurants that match the customer's needs, ALWAYS mention them by their specific name in your response. "
+        "Give concrete recommendations with restaurant names - do not give vague answers. "
+        "If you found relevant restaurants in search results, list them by name. "
+        "If you don't find specific restaurants, say so explicitly."
     )
     try:
         text = await _ask_claude(system, question, max_tokens=400, use_search=use_search)
