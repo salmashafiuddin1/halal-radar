@@ -76,17 +76,17 @@ export default function Landing() {
             </div>
             <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tighter text-foreground sm:text-6xl lg:text-7xl">
               When Muslims search for halal,<br />
-              <span className="text-primary">does Claude</span><br />
-              <span className="text-accent">recommend you?</span>
+              <span className="text-primary">do AI tools recommend you?</span><br />
+              <span className="text-accent">ChatGPT, Claude, Gemini</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Your halal restaurant is great. But is Claude AI recommending you? When Muslim customers search for halal food on AI, most don't find you—even though you have real reviews, real ratings, and real customers. HalalRadar analyzes your visibility and gives specific, actionable recommendations to get discovered. In 5 seconds, you'll know exactly where you're invisible to AI—and how to fix it.
+              Your halal restaurant is great. But are ChatGPT, Claude, and Google Gemini recommending you? When Muslim customers search for halal food on AI, most don't find you—even though you have real reviews, real ratings, and real customers. HalalRadar analyzes your visibility across all major AI tools and gives specific, actionable recommendations to get discovered. In 5 seconds, you'll know exactly where you're invisible to AI—and how to fix it.
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
               Built by Salma Shafi
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2"><Bot size={16} className="text-primary" /> Powered by Claude</div>
+              <div className="flex items-center gap-2"><Bot size={16} className="text-primary" /> Tests ChatGPT, Claude & Gemini</div>
               <div className="flex items-center gap-2"><Radar size={16} className="text-primary" /> 5 content clusters</div>
               <div className="flex items-center gap-2"><Compass size={16} className="text-primary" /> Actionable fixes</div>
             </div>
@@ -171,8 +171,8 @@ export default function Landing() {
           />
           <StepCard
             step="02"
-            title="Probe with Claude"
-            body="Each question is sent to Claude (Anthropic) in parallel. We record whether your restaurant is mentioned by name in the response."
+            title="Probe AI tools with real search"
+            body="Each question is sent to ChatGPT, Claude, and Google Gemini with web search enabled. We see exactly what these AI tools recommend and whether your restaurant gets discovered by real customer queries."
             icon={<Send size={22} />}
           />
           <StepCard
